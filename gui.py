@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
-#
-# gui    for schedule me  - this is a cleaned up ( somewhat ) new version
-#
-#
-# status
-#       ** from smart terminal
 
+
+"""
+
+ gui    for schedule me  - this is a cleaned up ( somewhat ) new version
+
+
+status
+       fine, could always be better
+"""
+
+import  ctypes
 import  logging
 import  pyperclip
 from    tkinter import *   # is added everywhere since a gui assume tkinter namespace
@@ -17,7 +22,7 @@ from app_global import AppGlobal
 
 class RedirectText(object):
     """
-    simple class to let us redirect console prints to our recieve area
+    simple class to let us redirect console prints to our receive area
     http://www.blog.pythonlibrary.org/2014/07/14/tkinter-redirecting-stdout-stderr/
     """
     #----------------------------------------------------------------------
@@ -59,11 +64,21 @@ class GUI( object ):
         self.controller         = AppGlobal.controller
         self.parameters         = AppGlobal.parameters
         self.gui_running        = False
-        self.root               = Tk()    # this is the tkinter root for the GUI move to gui after new working well plus bunch after here
+        self.root               = Tk()
 
-#        if self.parameters.os_win:
-#            # icon may cause problem in linux for now only use in win
-#            self.root.iconbitmap( self.parameters.icon )
+#        print( "next set icon " + str( self.parameters.os_win ) )
+        if self.parameters.os_win:
+            # from qt - How to set application's taskbar icon in Windows 7 - Stack Overflow
+            # https://stackoverflow.com/questions/1551605/how-to-set-applications-taskbar-icon-in-windows-7/1552105#1552105
+
+            icon = self.parameters.icon
+            if not( icon is None ):
+                print( "set icon "  + str( icon ))
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(icon)
+                self.root.iconbitmap( icon )
+            else:
+                print( "no icon "  + str( icon ))
+
 #
         a_title   = self.controller.app_name + " version: " + self.controller.version # + " mode: " + self.parameters.mode
 #        if self.controller.parmeters_x    != "none":
@@ -128,7 +143,7 @@ class GUI( object ):
 #        #self.root.pack( expand = True, sticky = E+W )  # this also works, why needed? sticky not an option here
 #
 #        # --------------------->> begin building ---------------------
-#        # this frame self.root may be rudundant with its parent
+#        # this frame self.root may be redundant with its parent
         #self.root_b.grid(  column=0,row=0, sticky= E+W+N+S )
 
         self.root.grid_columnconfigure( 0, weight = 1 )
@@ -348,6 +363,10 @@ class GUI( object ):
         a_button.config( command = self.controller.os_open_helpfile )
         a_button.pack( side = LEFT )
 
+        a_button = Button( a_frame , width=10, height=2, text = "About" )
+        a_button.config( command = AppGlobal.about  )
+        a_button.pack( side = LEFT )
+
         return a_frame
 
     # ------------------------------------------
@@ -537,7 +556,7 @@ class GUI( object ):
     # ------------------------------------------
     def __make_label__( self, a_frame, a_row, a_col, a_text, label_id = None, label_dict = None ):
         """
-        a_id   id for lable in the dict
+        a_id   id for label in the dict
         a_dict will contain the label reference now used for setting text as in show_item
         helper for making and placing labels
         return tuple -- or by ref do not need to , test this in templates
@@ -562,7 +581,7 @@ class GUI( object ):
     def run( self,  ):
         """
         run the gui
-        will block untill destroped, except for polling method in controller
+        will block until destroyed, except for polling method in controller
         """
         # move from controller to decouple type of gui
         self.gui_running        = True
@@ -586,7 +605,7 @@ class GUI( object ):
               a_show_string, the string you want shown
         notes:
               if the item_name is not found log an error, not exception
-              this will work for any label in the dictionary else except for if caluse below log a message
+              this will work for any label in the dictionary else except for if clause below log a message
         """
         lbl    =  self.show_dict.get( item_name, None )
 
@@ -604,7 +623,7 @@ class GUI( object ):
     def print_send_string( self, data ):
         """
         fix name !!
-        add recieve tag to parameters ??
+        add receive tag to parameters ??
         """
         sdata = self.prefix_send + data  + "\n"
         self.print_string( sdata )   # or just use directly
@@ -622,7 +641,7 @@ class GUI( object ):
     # ------------------------------------------
     def print_info_string( self, data ):
         """
-        add info prefix and new line suffix and show in recieve area
+        add info prefix and new line suffix and show in receive area
         """
         sdata = self.prefix_info +  data  + "\n"    # how did data get to be an int and cause error ??
         self.print_string( sdata )
@@ -631,7 +650,7 @@ class GUI( object ):
     # ------------------------------------------
     def print_no_pefix_string( self, data ):
         """
-        add new line suffix and show in recieve area
+        add new line suffix and show in receive area
         """
         sdata = data  + "\n"
         self.print_string( sdata )
@@ -640,7 +659,7 @@ class GUI( object ):
     # ---------------------------------------
     def print_string( self, a_string ):
         """
-        print to recieve area, with scrolling and
+        print to receive area, with scrolling and
         delete if there are too many lines in the area
         """
         self.rec_text.insert( END, a_string, )      # this is going wrong, why how
@@ -652,11 +671,11 @@ class GUI( object ):
             print( exception )
             numlines = 0
         if numlines > self.max_lines:
-            cut  = numlines/2     # lines to keep/remove
+            cut  = int( numlines/2 )    # lines to keep/remove
             # remove excess text
             self.rec_text.delete( 1.0, str( cut ) + ".0" )
-            #msg     = "Delete from test area at " + str( cut )
-            #self.logger.info( msg )
+#            msg     = "Delete from test area at " + str( cut )
+#            self.logger.info( msg )
 
         if self.cb_scroll_var.get():
             self.rec_text.see( END )
@@ -666,7 +685,7 @@ class GUI( object ):
    # ------------------------------------------
     def cb_send_as_parm( self, button_stuff ):
         """
-        take the current send buttons and entry fields and optput as an array
+        take the current send buttons and entry fields and output as an array
         in the same format as used by the parameter.py file
         no interaction with controller
         put in clipboard too boot ??
@@ -674,8 +693,6 @@ class GUI( object ):
         get current send areas as parameter string
         [ ( "Send", "send_me", True ), ( "Send
         """
-        # parm = ""
-        # parm_lines    = []
         parm_list     = [ "button_parms = [" ]
 #        self.sends               = []  frames seem not to be used !!
 #        self.sends_buttons       = []
@@ -700,7 +717,7 @@ class GUI( object ):
 
         parm_list += [ "]" ]
         parm   =  "".join( parm_list )
-        # print( parm )
+#        print( parm )
         self.print_no_pefix_string( parm )
 
     #----- buttons ------------------------
@@ -751,7 +768,6 @@ class GUI( object ):
             return
 
         elif btext == "Copy All":
-
             # may be in do CopyButton
             #def doCopyButton( self, event ):
             """
@@ -763,12 +779,6 @@ class GUI( object ):
         elif btext == "Cvert":
             # print btext
             adata   =  self.rec_text.get( 1.0, END )
-
-            #bdata  = dataConvert1( adata )
-            #self.text1.delete( 1.0, END )
-            #adata = "this is the text called adata that is..... "
-            #self.text1.insert( END, bdata, )
-            #self.text1.see( END )
 
             data_splits   = adata.split( " " )
 
@@ -817,7 +827,7 @@ class GUI( object ):
     def doClearButton( self, event):
         """
         for the clear button
-        clear the recieve area
+        clear the receive area
         """
         self.rec_text.delete( 1.0, END )
         return
@@ -868,7 +878,7 @@ if __name__ == '__main__':
     """
     run the app
     """
-    # ------ with the test controller, needs a bit of maintance
+    # ------ with the test controller, needs a bit of maintenance
     #        a_app = test_controller.TestController(  )
     #        a_app.test_run_gui()
     #

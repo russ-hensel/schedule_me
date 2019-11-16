@@ -1,0 +1,33 @@
+===========  ======================
+/usr/bin/python3.6
+python3 -m venv <envname>
+
+spyder activate your_env
+
+================ ===================
+Easy Way to switch Environments in Spyder? - Google Groups
+    *>url  https://groups.google.com/forum/#!topic/spyderlib/NWGlu7r7xxo
+
+On Anaconda promt/ Command promt:
+
+spyder activate your_env
+
+This will open Spyder running under your_env
+
+Hope this helps
+Tomas
+- show quoted text -
+
+
+
+================ ===================
+
+================ ===================
+
+
+
+
+================ ===================
+
+
+

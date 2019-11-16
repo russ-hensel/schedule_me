@@ -2,34 +2,27 @@
 # -*- coding: utf-8 -*-
 
 
-        # -*- coding: utf-8 -*-
-
+"""
 # Purpose:
-#    scheduling app
+#    scheduling app  -- this is the "main program"
 #
-# Environment:
-#
+# Environment ( my dev ):
+
+#        Windows
 #        Spyder 3.x
 #        Python 3.x
 #        Tkinker
-#
-# Features:
 
-#
-# History/ToDo  ** = when done   !! = planned or considerd ?? = think about
-#   Copied from mcuterminal, perhaps update from there time to time ( aug 2015 )
 
-#    ** from smart terminal and.....
-#    ** second thread up and running
-#    ** simmple task list working
-#    ## will send email
-#    !! reload/restart  not yet running
+
+"""
+
 
 import logging
 import sys
 import os
 import time
-#import datetime
+import datetime
 import traceback
 import queue
 #import threading
@@ -60,7 +53,7 @@ class ScheduleMe( object ):
 
         AppGlobal.controller        = self
         self.app_name               = "ScheduleMe"              # std name often used in other apps
-        self.version                = "Ver2 2018 04 09.0"       # std name
+        self.version                = "Ver3 2019 11 09.0"       # std name
 
         self.gui                    =  None
         self.no_restarts            =  -1
@@ -68,7 +61,7 @@ class ScheduleMe( object ):
         # ----------- for second thread -------
         self.queue_to_gui           = None
         self.queue_from_gui         = None
-#        self.gui_recieve_lock       = threading.Lock()   # when locked the gui will process recieve, aquired released in helper
+#        self.gui_recieve_lock       = threading.Lock()   # when locked the gui will process receive, acquired released in helper
                                                          # how different from just a variable set?
         #self.org_print              = print  # save so can be reset this is the print function
         self.restart( )
@@ -101,8 +94,8 @@ class ScheduleMe( object ):
         self.polling_fail         = False   # flag set if polling in gui thread fails
 
         self.is_first_gui_loop    = True
-        self.ext_processing       = None     # built later frompermaters if specified
-        self.logger               = None    # set later none value protects against call against nothing
+        self.ext_processing       = None     # built later from parameters if specified
+        self.logger               = None     # set later none value protects against call against nothing
 
         # ----- parameters
 
@@ -127,7 +120,7 @@ class ScheduleMe( object ):
 
         self.prog_info()
 
-        # set up queues befor creating helper thread
+        # set up queues before creating helper thread
         self.queue_to_helper    = queue.Queue( self.parameters.queue_length )   # send strings back to tkinker mainloop here
         self.queue_fr_helper    = queue.Queue( self.parameters.queue_length )
         self.helper_thread      = schedule_me_helper.HelperThread( )
@@ -172,31 +165,29 @@ class ScheduleMe( object ):
  # -------------------------------------------------------
     def prog_info( self ):
         """
-        log info about program and its argument/enviroment to the logger
+        log info about program and its argument/environment to the logger
         after logger is set up
         args: zip
         ret:  zip
         log_msg = "a message "
         # debug info warning, error critical
-
-
         """
         fll         = AppGlobal.force_log_level
         logger      = self.logger
 
         if ( self.no_restarts == 0 ) :
-            logger.log( fll,      "" )
+            logger.log( fll,  "" )
             logger.log( fll,  "" )
             logger.log( fll,  "============================" )
-            logger.log( fll,      "" )
+            logger.log( fll,  "" )
 
-            logger.log( fll, "Running " + self.app_name + " version = " + self.version ) # + " mode = " + parameters.mode )
+            logger.log( fll,  "Running " + self.app_name + " version = " + self.version ) # + " mode = " + parameters.mode )
             logger.log( fll,  "" )
 
         else:
-            logger.log( fll,     "======" )
-            logger.log( fll, "Restarting " + self.app_name + " version = " + self.version ) #+ " mode = " + parameters.mode )
-            logger.log( fll,      "=====" )
+            logger.log( fll,  "======" )
+            logger.log( fll,  "Restarting " + self.app_name + " version = " + self.version ) #+ " mode = " + parameters.mode )
+            logger.log( fll,  "=====" )
 
         if len( sys.argv ) == 0:
             logger.log( fll, "no command line arg " )
@@ -207,8 +198,8 @@ class ScheduleMe( object ):
                 logger.log( fll, "command line arg " + str( ix_arg ) + " = " + sys.argv[ix_arg])
                 ix_arg += 1
 
-        logger.log( fll,  "current directory " +  os.getcwd() )
-        logger.log( fll,  "COMPUTERNAME "      +  str( os.getenv( "COMPUTERNAME" ) ) )  # may not exist in linux
+        logger.log( fll,  f"current directory {os.getcwd()}" )
+        logger.log( fll,  f"COMPUTERNAME {self.parameters.computername}" )
 
         start_ts     = time.time()
         dt_obj       = datetime.datetime.utcfromtimestamp( start_ts )
@@ -250,7 +241,7 @@ class ScheduleMe( object ):
         """
         this is a private method
         polling task runs continually in the GUI
-        reciving data is an important task. but is it in this thread  any more  ??
+        receiving data is an important task. but is it in this thread  any more  ??
         also auto tasks will be run from here
         polling frequency set via taskDelta, ultimately in parameters
         http://matteolandi.blogspot.com/2012/06/threading-with-tkinter-done-properly.html
@@ -324,17 +315,14 @@ class ScheduleMe( object ):
         used as callback from gui button
         """
         a_filename = self.starting_dir  + os.path.sep + "parameters.py"
-
-        from subprocess import Popen, PIPE  # since infrequently used
-        proc = Popen( [ self.parameters.ex_editor, a_filename ] )
+        AppGlobal.os_open_txt_file( a_filename  )
 
     # ----------------------------------------------
     def os_open_logfile( self,  ):
         """
         used as/by callback from gui button.  Can be called form gt
         """
-        from subprocess import Popen, PIPE  # since infrequently used
-        proc = Popen( [ self.parameters.ex_editor, self.parameters.pylogging_fn ] )
+        AppGlobal.os_open_txt_file( self.parameters.pylogging_fn  )
 
     # ----------------------------------------------
     def os_open_helpfile( self,  ):
@@ -352,14 +340,6 @@ class ScheduleMe( object ):
         call back for gui button
         """
         print( "cb_gui_test_1" )
-
-#        # -----------------------
-#        import db
-#        a_db    = db.DBAccess()
-#        ok      = a_db.open()
-#        print( "db.open ", ok  )
-#
-#        a_db.close()
 
         #----------------------
         ret = AppGlobal.scheduled_event_list.test_query()
@@ -393,15 +373,15 @@ class TestAppOne( object ):
         # ----------- for second thread -------
         self.queue_to_gui           = None
         self.queue_from_gui         = None
-#        self.gui_recieve_lock       = threading.Lock()   # when locked the gui will process recieve, aquired released in helper
+#        self.gui_recieve_lock       = threading.Lock()   # when locked the gui will process receive, acquired released in helper
                                                          # how different from just a variable set?
         #self.org_print              = print  # save so can be reset this is the print function
 
         self.polling_fail         = False   # flag set if polling in gui thread fails
 
         self.is_first_gui_loop    = True
-        self.ext_processing       = None     # built later frompermaters if specified
-        self.logger               = None    # set later none value protects against call against nothing
+        self.ext_processing       = None     # built later from parameters if specified
+        self.logger               = None     # set later none value protects against call against nothing
 
         # ----- parameters
 
@@ -445,21 +425,21 @@ class TestAppOne( object ):
 #
 #        self.helper_thread.join()
 
-        # ============== test here ===========
-        import db
-        a_db            = db.DBAccess()
-        a_dict_name     = "greenhouse"
-        db_connect_ok   = a_db.open( a_dict_name )
-        msg             = "ok"
-
-        fetched_data    = []
-
-        if  not( db_connect_ok):
-            msg    = "no_db_connect"
-            #return msg
-        else:
-            msg    = "connect_good"
-        print( msg)
+#        # ============== test here ===========
+#        import db
+#        a_db            = db.DBAccess()
+#        a_dict_name     = "greenhouse"
+#        db_connect_ok   = a_db.open( a_dict_name )
+#        msg             = "ok"
+#
+#        fetched_data    = []
+#
+#        if  not( db_connect_ok):
+#            msg    = "no_db_connect"
+#            #return msg
+#        else:
+#            msg    = "connect_good"
+#        print( msg)
 
         msg = self.app_name + ": all done"
         print( msg )

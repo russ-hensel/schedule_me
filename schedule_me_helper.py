@@ -22,9 +22,9 @@ from email.mime.text        import MIMEText
 
 # ------------- local imports
 from app_global import AppGlobal
-import db
+#import db
 
-# try with subclassing of Thread
+# try with sub-classing of Thread
 # or is this a thread   or just its manager
 # In other words, only override the __init__() and run() methods of this class.
 # class threading.Thread(group=None, target=None, name=None, args=(), kwargs={})
@@ -123,7 +123,7 @@ class HelperThread( threading.Thread ):
         """
         a function to interrupt the help thread and go back to polling
         function called to end the helper subroutine
-        if another functin is running posting for this
+        if another function is running posting for this
         will cause it to throw an exception
         ends request_to_pause
         helper thread only
@@ -170,8 +170,8 @@ class HelperThread( threading.Thread ):
     def sleep_ht_for( self, for_time ):
         """
         this is a way to pause action in the ht while keeping
-        recieve active
-        have it end if anything is recieved??
+        receive active
+        have it end if anything is received??
         args: for_time number of seconds to stay here
         call ht
         """
@@ -196,13 +196,13 @@ class HelperThread( threading.Thread ):
         ret: zip
         throws: HelperException if anything comes in on queue
 
-        released to run, if until_time = 0. then gui relaeased "forever"
+        released to run, if until_time = 0. then gui released "forever"
         !! not implemented
-        release for time, then relock, if for_time == 0.
+        release for time, then re-lock, if for_time == 0.
         release "forever"
-        release the main thead from its polling loop for time in float seconds
+        release the main thread from its polling loop for time in float seconds
         can also call to get controller to pause again
-        need to keep recieving, and keep eye on queue
+        need to keep receiving, and keep eye on queue
         () = self.release_gui_for( time )
         also risk of lock up if controller does not respond
         have an exit with exception ??
@@ -247,7 +247,6 @@ class HelperThread( threading.Thread ):
         ( action, function, function_args ) = self.rec_from_queue()
         call ht
         """
-
         # why not use Queue.empty() bool function ?? in code below have wrong kind of exception
         # got error  except Queue.Empty:  AttributeError: 'NoneType' object has no attribute 'Empty'
         is_empty = False
@@ -267,11 +266,11 @@ class HelperThread( threading.Thread ):
     # -------------------------------------------------------
     def send_receive( self, send_data, for_time  ):
         """
-        sends some data and waits for time to recieve a reply
+        sends some data and waits for time to receive a reply
         (       )
 
         ?? add flag to control throwing of exception  or message for exception
-        sends a string, recieves a string, in meantime checks queue
+        sends a string, receives a string, in meantime checks queue
 
         receive data via the comm port
         display data
@@ -287,7 +286,7 @@ class HelperThread( threading.Thread ):
         receive only full strings ending with /n else
         accumulated in the driver /n is stripped
         call: ht
-        ret:  non empt string or throws exception
+        ret:  non empty string or throws exception
         """
         #self.logger.info( "helper: send_receive() entered",  )
         wait_till   = time.time( ) + for_time
@@ -299,11 +298,11 @@ class HelperThread( threading.Thread ):
 
         while ( time.time( ) < wait_till ):
 
-             time.sleep( self.ht_delta_t  )  # ok because we are checkin recieve and queue
+             time.sleep( self.ht_delta_t  )  # ok because we are checking receive and queue
              # use of controller.recieve ng use only self.recieve     feb 2017
              # data = self.controller.receive()
              # data = self.receive()
-             data = ""   # remove the recieve code
+             data = ""   # remove the receive code
              if not( data == "" ):
                  return data
 
@@ -320,7 +319,7 @@ class HelperThread( threading.Thread ):
     # --------------------------------------------------
     def post_to_queue( self, action, function, args ):
         """
-                post args to the queue to the controller
+        post args to the queue to the controller
         call from: helper thread
         args: action=string, function=a function, args=tuple of arguments to function
         ret: zip
@@ -364,7 +363,7 @@ class HelperThread( threading.Thread ):
 class ScheduledEvent( object ):
     """
     these are events that are scheduled to run at some time and then in some way
-    reschedule themselfes
+    reschedule themselves
 
     sch_me.ScheduledEvent(   self, event_name, action, when, reschedule_function, rs_1 = 1. , rs_2 = 1.  )
     event to be run
@@ -507,39 +506,39 @@ class ScheduledEventList( object ):
 #        for  i_event in self.future_events:
 #            print( i_event )
 
-   # --------------------------------------------------------
-    def test_db_connect( self, a_dict_name,  ):
-        """
-        old does it still work in what context
-        test if the db connect works
-        add logging, add email
-        need to limit amount of email - may need to reset that from gui
-        """
-        a_event         = self.future_events[ 0 ]   # or pass as an argument ??
-        a_name          = a_event.name
-        helper          = AppGlobal.helper
-
-        a_db            = db.DBAccess()
-        db_connect_ok   = a_db.open( a_dict_name )
-        a_db.close()
-
-#        print( "db.open ", db_connect_ok  )
-        if  db_connect_ok:
-            #print( "db.open ", ok  )
-            msg = "db open ok "
-        else:
-            msg = "db failed to open "
-
-        helper.print_info_string( "fe_db_connect: running event " + a_name  + " now = " + str( datetime.datetime.now()) +
-
-        + "using dict named: " + a_dict_name + " " + msg )
-        #self.send_email( "fe_post_message:" , "running event " + a_name   )
+#   # --------------------------------------------------------
+#    def test_db_connect( self, a_dict_name,  ):
+#        """
+#        old does it still work in what context
+#        test if the db connect works
+#        add logging, add email
+#        need to limit amount of email - may need to reset that from gui
+#        """
+#        a_event         = self.future_events[ 0 ]   # or pass as an argument ??
+#        a_name          = a_event.name
+#        helper          = AppGlobal.helper
+#
+#        a_db            = db.DBAccess()
+#        db_connect_ok   = a_db.open( a_dict_name )
+#        a_db.close()
+#
+##        print( "db.open ", db_connect_ok  )
+#        if  db_connect_ok:
+#            #print( "db.open ", ok  )
+#            msg = "db open ok "
+#        else:
+#            msg = "db failed to open "
+#
+#        helper.print_info_string( "fe_db_connect: running event " + a_name  + " now = " + str( datetime.datetime.now()) +
+#
+#        + "using dict named: " + a_dict_name + " " + msg )
+#        #self.send_email( "fe_post_message:" , "running event " + a_name   )
 
     # --------------- event functoin = ef -----------------------------------------
     def ef_post_message( self,  a_dict_name,  ):
         """
-        event functoin = ef = use as a function in an event
-        this is maily a test function just posting to gui
+        event function = ef = use as a function in an event
+        this is mainly a test function just posting to gui
         consider adding some more info -- current time count......
         """
         a_event         = self.future_events[ 0 ]   # or pass as an argument ??
@@ -554,10 +553,10 @@ class ScheduledEventList( object ):
         event function = ef = use as a function in an event
         should be run by self.run_event
         test remote system by fetching data and sending email if allowed by rules
-        this is for greenhouse and perhaps root cellar, should depend on parm name to increase the flexability
+        this is for greenhouse and perhaps root cellar, should depend on parm name to increase the flexibility
         without writing a new function
         name fe_db_fetch_email is not good
-        return: oly update of state
+        return: only update of state
         """
         a_dict     = AppGlobal.parameter_dicts[ a_dict_name ]               # get the dictionary for this event
 
@@ -649,7 +648,7 @@ class ScheduledEventList( object ):
             return
 
         # we want to skip times while machine was off or asleep so we will do some math
-        # want to be close to intergeral multiples of delta time from first setting
+        # want to be close to integer multiples of delta time from first setting
         # may be close to 0 if no sleep or off time
         skip                    = int( ( datetime.datetime.now() - a_event.next_run_time ) / delt_t )
         new_time                = ( ( skip + 1 ) * delt_t ) + a_event.next_run_time
@@ -687,14 +686,14 @@ class ScheduledEventList( object ):
         a_dict     = AppGlobal.parameter_dicts[ a_dict_name ]
         try:                                            # try to contain the damage if a misconfigured event blow out
 
-            a_event         = self.future_events[ 0 ]   # the event is automagically in this position prior to
+            a_event         = self.future_events[ 0 ]   # the event is auto-magically in this position prior to
                                                         # calling this function get a reference to it here
             a_name          = a_event.name              #
             helper          = AppGlobal.helper          # what
 
             a_db            = db.DBAccess()             # local reference to db access object
 
-            db_connect_ok   = a_db.open( a_dict_name )  # open the dataqbase using the named dict
+            db_connect_ok   = a_db.open( a_dict_name )  # open the database using the named dict
             if  not( db_connect_ok):
                 return "no_db_connect"                  # failed to get a connect
 

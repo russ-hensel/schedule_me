@@ -38,7 +38,8 @@ class Parameters( object ):
         for particular operating systems
         """
         if  self.os_win:
-            self.icon              = r"./green_house.ico"    #  greenhouse this has issues on rasPi
+            pass
+            #self.icon              = r"./green_house.ico"    #  greenhouse this has issues on rasPi
             #self.icon              = None                   #  default gui icon
 
         else:
@@ -50,7 +51,6 @@ class Parameters( object ):
         this is an subroutine to tweak the default settings of "default_terminal_mode"
         for particular computers.  Put in settings for you computer if you wish
         """
-
         if self.computername == "smithers":
             self.port               = "COM5"   #
             #self.port              = "COM3"   #
@@ -63,11 +63,23 @@ class Parameters( object ):
             self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"    # russ win 10 millhouse
             #self.win_geometry   = '1300x600+20+20'          # width x height position
 
+        elif self.computername == "theprof":
+            self.port               = "COM4"   #
+            self.port               = "COM5"
+            self.port               = "COM3"
+            self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
+            #self.win_geometry   = '1300x600+20+20'          # width x height position
+            self.pylogging_fn       = "theprof_smart_terminal.py_log"   # file name for the python logging
+
+        else:
+            print( f"In parameters: no special settings for {self.computername}" )
+
+
     # -------
     def mode_2(self,  ):
 
         self.mode     = "Mode 2"
-
+#        self.icon              = r"./green_house.ico"    #  greenhouse this has issues on rasPi
         #--------------- appearance ---------
 #        self.win_geometry      = '1300x700+20+20'    # width x height position
 #
@@ -103,10 +115,10 @@ class Parameters( object ):
 
         #toaddr          = "squeakathighrant@gmail.com"
 
-        #----------------- db connect in subroutines -- subroutines make it easire to switch sets of parameters
+        #----------------- db connect in subroutines -- subroutines make it easier to switch sets of parameters
 
         #  self.select_timedelat  = datetime.timedelta( days= 0, hours = 0, minutes = 30  )
-        # self.dbRtoPi181( ")     # 181 is root cellar enviromental monitor
+        # self.dbRtoPi181( ")     # 181 is root cellar environmental monitor
 
         self.create_parm_dict_greenhouse( )
         self.create_parm_dict_rootcellar( )
@@ -118,7 +130,7 @@ class Parameters( object ):
     def mode_1(self,  ):
 
         self.mode     = "Mode 1"
-
+        #self.icon              = r"./green_house.ico"    #  greenhouse this has issues on rasPi
         #--------------- appearance ---------
         self.win_geometry      = '1300x700+20+20'    # width x height position
 
@@ -150,7 +162,7 @@ class Parameters( object ):
 
         # ----------------------- data
 
-        self.alarm_min_temp     = 50        # farenheight
+        self.alarm_min_temp     = 50        # Fahrenheit
         self.alarm_max_temp     = 75
 
         #toaddr          = "squeakathighrant@gmail.com"
@@ -158,13 +170,16 @@ class Parameters( object ):
         #----------------- db connect in subroutines -- subroutines make it easire to switch sets of parameters
 
         #self.select_timedelat  = datetime.timedelta( days= 0, hours = 0, minutes = 30  )
-        #self.dbRtoPi181( ")     # 181 is root cellar enviromental monitor
+        #self.dbRtoPi181( ")     # 181 is root cellar environmental monitor
 
         return
 
     # -------
     def default_parms(self,  ):
         self.mode               = "Default"
+        self.icon               = r"./clock_white.ico"    #  check to match startup ico
+
+
         #--------------- automatic -----------------
         self.our_os = sys.platform       #testing if our_os == "linux" or our_os == "linux2"  "darwin"  "win32"
         # print( "our_os is ", our_os )
@@ -176,7 +191,11 @@ class Parameters( object ):
 
         self.platform           = self.our_os    # sometimes it matters which os
         self.opening_dir        = os.getcwd()
-        self.computername       = os.getenv( "COMPUTERNAME" ) # what in linux
+
+        if self.os_win:
+            self.computername       = os.getenv( "COMPUTERNAME" ).lower()
+        else:
+            self.computername       = "linux_computer"      # linux
 
         #--------------- for mode ---------
 
@@ -200,7 +219,7 @@ class Parameters( object ):
         self.print_to_log       = False
 
         # ----- message area in gui   -----------
-        self.default_scroll     = 1        # 1 auto scroll the recieve area, else 0
+        self.default_scroll     = 1        # 1 auto scroll the receive area, else 0
         self.max_lines          = 1000
 
         self.gt_delta_t         = 100              # in ms --   lowest I have tried is 10 ms, could not see cpu load
@@ -234,7 +253,7 @@ class Parameters( object ):
 
         # ----------------------- data
 
-        self.alarm_min_temp     = 50        # farenheight
+        self.alarm_min_temp     = 50        # Fahrenheit
         self.alarm_max_temp     = 75
 
         #toaddr          = "squeakathighrant@gmail.com"
@@ -331,13 +350,13 @@ class Parameters( object ):
     def old_init( self ):
 
         # =========== meta parms, set other parms ===========
-        # these parameters are used to set other parameters as a convenience, if this is not convienuent for you just
-        # set your parmeters at the end of the init or us a second parameter file.
-    # ------->> Meta, parameters that may be used for convienence to change the value of other parameters
+        # these parameters are used to set other parameters as a convenience, if this is not convenient for you just
+        # set your parameters at the end of the init or us a second parameter file.
+    # ------->> Meta, parameters that may be used for convenience to change the value of other parameters
 
         # -----  mode ... ----------------
         # mode might be called application it changes the function of the
-        # app, mostly in the "auto" mode, it primarly effects the auto task list
+        # app, mostly in the "auto" mode, it primary effects the auto task list
         # and perhaps the database connection
 
         # this is the name of a connection
@@ -397,7 +416,7 @@ class Parameters( object ):
         #self.grapher         =  r"D:\Russ\0000\SpyderP\smart_terminal_graph\smart_terminal_graph.py"
 
     # ------->> Communications
-        # -----  parameters that are relavant for rs232 parms for arduino
+        # -----  parameters that are relevant for rs232 parms for arduino
 
         # ----- Processing Monitor application Values use may depend on mode  ===============
 
@@ -433,11 +452,11 @@ class Parameters( object ):
 
         a_dict["select_timedelat"]      = datetime.timedelta( days= 0, hours = 0, minutes = 30  ) # time used in the database select
 
-        a_dict["alarm_min_temp"]        = 50        # ( farenheight ) used to set allarm ( email ) if temp gets too low
-        a_dict["alarm_max_temp"]        = 75        # ( farenheight ) used to set allarm ( email ) if temp gets too high
+        a_dict["alarm_min_temp"]        = 50        # ( Fahrenheit ) used to set alarm ( email ) if temp gets too low
+        a_dict["alarm_max_temp"]        = 75        # ( Fahrenheit ) used to set alarm ( email ) if temp gets too high
 
         a_dict["failed_connect_count"]  = 0         # used as variable to count how many db connects in a row fail
-        a_dict["max_connect_count"]     = 4         # at this number of faild connects an email is trigged
+        a_dict["max_connect_count"]     = 4         # at this number of failed connects an email is trigged
         a_dict["min_repeat_email_time"] = datetime.timedelta( days= 1, hours = 0, minutes = 0  )   # no emails repeated for this time period
         a_dict["time_last_email"]       = None      # time last email was sent
 
@@ -461,11 +480,11 @@ class Parameters( object ):
             a_dict["sql_select"]          = "SELECT gh_time, temp_1, humid_1 FROM env_data_table_1  WHERE ( gh_time > %s ) order by temp_1 asc"
             a_dict["select_timedelat"]    = datetime.timedelta( days= 0, hours = 0, minutes = 30  )
 
-            a_dict["alarm_min_temp"]      = 50        # farenheight
+            a_dict["alarm_min_temp"]      = 50        # Fahrenheit
             a_dict["alarm_max_temp"]      = 75
 
             a_dict["failed_connect_count"]  = 0
-            a_dict["max_connect_count"]     = 4           # at 4 trigges an email
+            a_dict["max_connect_count"]     = 4           # at 4 triggers an email
             a_dict["min_repeat_email_time"] = datetime.timedelta( days= 1, hours = 0, minutes = 0  )
             a_dict["time_last_email"]       = None
 
@@ -489,11 +508,11 @@ class Parameters( object ):
             a_dict["sql_select"]          = "SELECT env_timestamp, temp_1, humid_1 FROM env   WHERE ( env_timestamp > %s ) order by temp_1 asc"
             a_dict["select_timedelat"]    = datetime.timedelta( days= 0, hours = 0, minutes = 30  )
 
-            a_dict["alarm_min_temp"]      = 38        # farenheight
+            a_dict["alarm_min_temp"]      = 38        # Fahrenheit
             a_dict["alarm_max_temp"]      = 65
 
             a_dict["failed_connect_count"]  = 0
-            a_dict["max_connect_count"]     = 4           # at 4 trigges an email
+            a_dict["max_connect_count"]     = 4           # at 4 triggers an email
             a_dict["min_repeat_email_time"] = datetime.timedelta( days= 1, hours = 0, minutes = 0  )
             a_dict["time_last_email"]       = None
 
@@ -503,57 +522,6 @@ class Parameters( object ):
     # ------->> Subroutines:  db set connection parameter
     #  these will probably not apply to your setup
 
-    # ----- db remote generic, still needs host from a caller # make add to passed dict ??
-    def dbRemote( self, ):
-        """
-        standard parameters for remote connection, but
-        will not set host which needs to be set in caller
-        return: set of instance variables
-        """
-        self.db_host             = '192.168.0.0'   # no pi of mine
-        self.db_host             = 'host not set'  # no pi of mine
-        self.db_port             = 3306
-
-        self.db_db               = 'env_data_1'
-
-        self.db_user             = 'env_user'
-        self.db_passwd           = 'pi_not_tau'
-
-    # ----- db on standard local name, move towards workin on all my pi's
-    def dbLocal( self, ):
-
-        self.db_host             = '127.0.0.1'
-        self.db_port             = 3306
-
-        self.db_db               = 'env_data_1'
-
-        self.db_user             = 'env_user'
-        self.db_passwd           = 'pi_not_tau'
-
-    # ----------------------- db on .....  ----------------------
-    def dbRtoPi181( self, ):   # make add to passed dict ?
-
-        self.db_host             = '192.168.0.181'
-        self.db_port             = 3306
-
-        self.db_db               = 'env_data_1'
-
-        self.db_user             = 'env_user'
-        self.db_passwd           = 'pi_not_tau'
-
-    #   ------------------------------------
-
-     # ----- db remote to a Pi  189
-
-    def dbRtoPi189( self, ):
-
-        self.dbRemote( )
-        self.connect             = "RtoPi189"
-        self.db_host             = '192.168.0.189'    # 178 even ethernet, 179 odd wifi
-        self.db_db               = 'pi_db'
-
-        self.db_user             = 'pi_user'
-        self.db_passwd           = 'taunot3point1fourpi'
 
 
     # -------------------------------
@@ -585,13 +553,13 @@ class Parameters( object ):
     #   ------------------------------------
     def __set_default__xxxx(self, ):
         """
+        looks like dead code for reference -- delete soon
         this sets defaults that are needed to make the system run, many have an advanced
         purpose and will not be documented ( comments here should not be trusted )
         here, other example parameter files document
         them, unless they are obsolete or unimplemented.  Setting unused parameters
         just wastes small amounts of memory, impact is minimal
         """
-
 
         #---------------- end meta parameters --------------------
         self.queue_length         = 20
@@ -601,14 +569,14 @@ class Parameters( object ):
         #self.task_list_on         = False   no longer exists
 
 
-        # ----- send/recieve/recieve area and presets  -----------
+        # ----- send/receive area and presets  -----------
         self.kivy                 = False
         self.max_lines            = 1000     # max number of lines in the recieve area
-        # number of lines in the recieve area before older lines are truncated
+        # number of lines in the receive area before older lines are truncated
         # limits memory used  0 for unlimited
 
         # determine if the receive auto scrolls or not -- also a check box in the gui
-        self.default_scroll    = 1        # 1 auto scroll the recieve area, else 0
+        self.default_scroll    = 1        # 1 auto scroll the receive area, else 0
 
         #import  gh_processing
         # ----------  self.start_helper_function    = gh_processing.GHProcessing.find_and_monitor_arduino
@@ -646,9 +614,6 @@ class Parameters( object ):
         # sets the initial overall window size - it is an oddly formatted string
         # self.win.geometry('1500x800+40+80')
 
-
-
-
         # specify an icon for the application window
         #  this may be an issue for linux, have some code to skip icon there, need to find out more
         self.icon              = r"D:\Temp\ico_from_windows\terminal_red.ico"    #  blue red green yellow
@@ -659,7 +624,7 @@ class Parameters( object ):
         self.icon              = None
 
     # ------->> Communications
-        # -----  parameters that are relavant for rs232 parms for arduino
+        # -----  parameters that are relevant for rs232 parms for arduino
 
         # 9600 is ok as are many others try this for most reliable? comm
         # The default is 8 data bits, no parity, one stop bit.
@@ -679,7 +644,7 @@ class Parameters( object ):
 # ----------------------------
 def dt_next_given_time( a_minute = 0, a_hour = 0, a_day = None ):
     """
-    returns datetime ( dt ) with a given hour ( 24 hr clock, and minute, and oprionally day ( beware too high )
+    returns datetime ( dt ) with a given hour ( 24 hr clock, and minute, and optionally day ( beware too high )
     today or tomorrow if in the past
     """
     dt_now     = datetime.datetime.now()
